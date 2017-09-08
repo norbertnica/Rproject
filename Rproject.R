@@ -1,13 +1,18 @@
 library("tidyverse")
 library("ggpubr")
 tryptone <- read_table("/home/norbert/Desktop/R/Tryptone.dat.txt")
-ggplot(data=tryptone)+ geom_point(mapping = aes(x=Conc,y=Count1,color=Time,size=3))+facet_wrap(~Temp)
+ggplot(data=tryptone)+ geom_point(mapping = aes(x=Conc,y=Count1,color=factor(Time)),size=4)+facet_wrap(~Temp)
 #ggplot(data=tryptone)+ geom_point(mapping = aes(x=Conc,y=Count2,color=Time,size=3))+facet_wrap(~Temp)
 #ggplot(data=tryptone)+ geom_bar(mapping = aes(x=Conc,y=Count1,color=Time,size=3))+facet_wrap(~Temp)
-
-
+library(lazyeval)
+ggplot(data=tryptone)+geom_point(aes(Conc,Count1),size=5)
 plots <- list()
 varnames <- names(tryptone)
+
+for(i in varnames[2:6]){
+  ggplot(mutate(tryptone,Time=factor(Time)))+ geom_point(mapping = aes_string(x="Conc",y=i,color="Time"),size=4)+facet_wrap(~Temp)
+  ggsave(filename=paste("interaction_plot_",i,".png",sep=""))
+}
 
 for(i in varnames[2:6]){
   plots[[i]] <- ggplot(data=tryptone)+geom_point(aes_string(x='Conc',y=i))

@@ -78,3 +78,9 @@ for(i in 1:3){
   ggarrange(plotlist=nested_plotlist[[i]])
   ggsave(filename=paste("plot_meancount_",varnames[[i+6]],".png",sep=""))
 }
+
+lmresult1 <- lm(Count1~Time+Temp+Conc,data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(Count1~Time+Temp+Conc+Time:Temp,data=tryptone)
+summary(lmresult1)
+

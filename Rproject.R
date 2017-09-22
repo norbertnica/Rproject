@@ -9,30 +9,58 @@ ggplot(data=tryptone)+geom_point(aes(Conc,Count1),size=5)
 plots <- list()
 varnames <- names(tryptone)
 
-for(i in varnames[2:6]){
+for(i in varnames[c(2:6,10)]){
   ggplot(mutate(tryptone,Time=factor(Time)))+ geom_point(mapping = aes_string(x="Conc",y=i,color="Time"),size=4)+facet_wrap(~Temp)
   ggsave(filename=paste("interaction_plot_",i,".png",sep=""))
 }
 
-for(i in varnames[2:6]){
+for(i in varnames[c(2:6,10)]){
   plots[[i]] <- ggplot(data=tryptone)+geom_point(aes_string(x='Conc',y=i))
 }
 ggarrange(plotlist=plots)
 ggsave(filename=paste("plot_count_Conc",".png",sep=""))
 
-for(i in varnames[2:6]){
+for(i in varnames[c(2:6,10)]){
   plots[[i]] <- ggplot(data=tryptone)+geom_point(aes_string(x='Temp',y=i))
 }
 ggarrange(plotlist=plots)
 ggsave(filename=paste("plot_count_Temp",".png",sep=""))
-
-for(i in varnames[2:6]){
-  plots[[i]] <- ggplot(data=tryptone)+geom_point(aes_string(x='Time',y=i))
+aux_list=list()
+nested_plotlist = list()
+plots = list()
+df_list=list()
+for(n in 1:3){
+  for(i in 1:6){
+    if(i==1){
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[i+1]])))
+      aux_list <- setNames(aux_list,newvarnames[[i]])
+      chuju <- group_by_(tryptone,varnames[[n+6]]) %>% summarise_(.dots=aux_list)
+    }
+    else if(i==6){
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[10]])))
+      aux_list <- setNames(aux_list,newvarnames[[i]])
+      chuju <- merge(chuju,group_by_(tryptone,varnames[[n+6]]) %>% summarise_(.dots=aux_list))
+      
+    }
+    else{
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[i+1]])))
+      aux_list <- setNames(aux_list,newvarnames[[i]])
+      chuju <- merge(chuju,group_by_(tryptone,varnames[[n+6]]) %>% summarise_(.dots=aux_list))
+      
+    }
+    plots[[i]] <- ggplot(data=chuju)+geom_bar(aes_string(x=varnames[[n+6]],y=newvarnames[[i]]),stat="identity")
+  }
+  nested_plotlist[[n]] <- plots
+  df_list[[n]] <- chuju
+  
 }
-ggarrange(plotlist=plots)
-ggsave(filename=paste("plot_count_Time",".png",sep=""))
+for(i in 1:3){
+  ggarrange(plotlist=nested_plotlist[[i]])
+  ggsave(filename=paste("plot_meancount_",varnames[[i+6]],".png",sep=""))
+}
 
-newvarnames = c("meancount1","meancount2","meancount3","meancount4","meancount5")
+
+newvarnames = c("meancount1","meancount2","meancount3","meancount4","meancount5","mean_meancount")
 mean_count <- group_by(tryptone,Time) %>% summarise(totalcount1=sum(Count1))
 
 ggplot(totalcount1)+geom_bar(aes(Time,totalcount1),stat="identity")
@@ -56,16 +84,22 @@ nested_plotlist = list()
 plots = list()
 df_list=list()
 for(n in 1:3){
-  for(i in 1:5){
+  for(i in 1:6){
     if(i==1){
       aux_list <- list(interp(~mean(x),x=as.name(varnames[[i+1]])))
       aux_list <- setNames(aux_list,newvarnames[[i]])
       chuju <- group_by_(tryptone,varnames[[n+6]]) %>% summarise_(.dots=aux_list)
     }
+    else if(i==6){
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[10]])))
+      aux_list <- setNames(aux_list,newvarnames[[i]])
+      chuju <- merge(chuju,group_by_(tryptone,varnames[[i+6]]) %>% summarise_(.dots=aux_list))
+      
+    }
     else{
       aux_list <- list(interp(~mean(x),x=as.name(varnames[[i+1]])))
       aux_list <- setNames(aux_list,newvarnames[[i]])
-      chuju <- merge(chuju,group_by_(tryptone,varnames[[n+6]]) %>% summarise_(.dots=aux_list))
+      chuju <- merge(chuju,group_by_(tryptone,varnames[[i+6]]) %>% summarise_(.dots=aux_list))
       
     }
     plots[[i]] <- ggplot(data=chuju)+geom_bar(aes_string(x=varnames[[n+6]],y=newvarnames[[i]]),stat="identity")
@@ -78,6 +112,43 @@ for(i in 1:3){
   ggarrange(plotlist=nested_plotlist[[i]])
   ggsave(filename=paste("plot_meancount_",varnames[[i+6]],".png",sep=""))
 }
+
+
+aux_list=list()
+nested_plotlist = list()
+plots = list()
+df_list=list()
+for(n in 1:6){
+  for(i in 1:3){
+    
+    if(n==6){
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[10]])))
+      aux_list <- setNames(aux_list,newvarnames[[n]])
+      chuju <- group_by_(tryptone,varnames[[i+6]]) %>% summarise_(.dots=aux_list)
+      
+    }
+    
+    else{
+      aux_list <- list(interp(~mean(x),x=as.name(varnames[[n+1]])))
+      aux_list <- setNames(aux_list,newvarnames[[n]])
+      chuju <- group_by_(tryptone,varnames[[i+6]]) %>% summarise_(.dots=aux_list)
+    }
+    plots[[i]] <- ggplot(data=chuju)+geom_bar(aes_string(x=varnames[[i+6]],y=newvarnames[[n]]),stat="identity")
+  }
+  nested_plotlist[[n]] <- plots
+  df_list[[n]] <- chuju
+  
+}
+for(i in 1:6){
+  ggarrange(plotlist=nested_plotlist[[i]])
+  ggsave(filename=paste("plot_meancount_",newvarnames[[i]],".png",sep=""))
+}
+
+ggplot(mutate(chuju,Conc=factor(Conc)))+geom_bar(aes(x=Conc,y=mean_meancount),stat="identity")
+
+
+
+
 
 lmresult1 <- lm(Count1~Time+Temp+Conc,data=tryptone)
 summary(lmresult1)
@@ -167,4 +238,5 @@ lmresult1 <- lm(meancount~Conc+I(Conc^2),data=tryptone)
 summary(lmresult1)
 lmresult1 <- lm(meancount~Conc+I(Conc^2)+I(Conc^3),data=tryptone)
 summary(lmresult1)
+
 

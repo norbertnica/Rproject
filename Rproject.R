@@ -132,3 +132,39 @@ lmresult1 <- lm(Count1~Temp+I(Temp^2)+Time+Conc+I(Temp*Time)+I(Temp^2*Time),data
 summary(lmresult1)
 lmresult1 <- lm(Count1~Temp+I(Temp*Time)+Time+Conc,data=tryptone)
 summary(lmresult1)
+
+
+lmresult1 <- lm(Count1~Temp+Time+Conc+I(Temp*Time)+I(Conc*Time)+I(Conc*Temp)+I(Conc*Time*Temp),data=tryptone)
+summary(lmresult1)
+
+tryptone$meancount <- (tryptone$Count1+tryptone$Count2+tryptone$Count3+tryptone$Count4+tryptone$Count5)/5
+
+lmresult1 <- lm(meancount~Temp+Time+Conc+I(Temp*Time)+I(Conc*Time)+I(Conc*Temp)+I(Conc*Time*Temp),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+Conc,data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+I(Conc^3)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+I(Conc^3)+I(Conc^4)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+I(Conc^3)+I(Conc^4)+I(Conc^5)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+
+lmresult1 <- lm(meancount~Temp+Time+Conc,data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+Time+Conc+I(Conc^2),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+Time+Conc+I(Conc^2)+I(Conc^3),data=tryptone)
+summary(lmresult1)
+
+lmresult1 <- lm(meancount~Conc,data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Conc+I(Conc^2),data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Conc+I(Conc^2)+I(Conc^3),data=tryptone)
+summary(lmresult1)
+

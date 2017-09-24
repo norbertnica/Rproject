@@ -239,4 +239,64 @@ summary(lmresult1)
 lmresult1 <- lm(meancount~Conc+I(Conc^2)+I(Conc^3),data=tryptone)
 summary(lmresult1)
 
+result2 <- lm(meancount~Temp+I(Temp^2)+Time+Conc+I(Temp*Time),data=tryptone)
+summary(result2)
+result2 <- lm(meancount~Temp+Time+Conc+I(Temp*Time),data=tryptone)
+summary(result2)
+lmresult3 <- lm(meancount~Temp+I(Temp^2)+Time+Conc,data=tryptone)
+summary(lmresult3)result2 %>% 
+  augment() %>% 
+  ggplot(aes(x = .fitted, y = .resid)) + 
+  geom_point() + 
+  geom_hline(aes(yintercept = 0), col = "red") + 
+  xlab("Fitted Hardness_cement") + 
+  ylab("Residuals") + 
+  ggtitle("Residuals vs fitted Hardness_cement") + 
+  theme_bw() + 
+  geom_linerange(aes(ymin = -.resid, ymax = .resid))
 
+#CHUJCIWDUPE
+
+plot(tryptone$Temp,tryptone$Conc)
+
+res <- result2$residuals
+Y_hat <- result2$fitted.values
+result2 %>% 
+  augment() %>% 
+  ggplot(aes(x = .fitted, y = .resid)) + 
+  geom_point() + 
+  geom_hline(aes(yintercept = 0), col = "red") + 
+  xlab("Fitted Hardness_cement") + 
+  ylab("Residuals") + 
+  ggtitle("Residuals vs fitted Hardness_cement") + 
+  theme_bw() + 
+  geom_linerange(aes(ymin = -.resid, ymax = .resid))
+
+ggplot(tryptone)+geom_point(aes(Conc,meancount))+geom_point(data=filter(tryptone,Row==9|Row==14|Row==29),aes(Conc,meancount,color="red"))
+filter(tryptone,Row==9)
+
+ggplot(mutate(tryptone,Time=factor(Time)))+ geom_point(mapping = aes_string(x="Conc",y="meancount",color="Time"),size=4)+geom_point(data=filter(tryptone,Row==9|Row==14|Row==29),aes(Conc,meancount,shape="k"))+facet_wrap(~Temp)
+
+
+lmresult1 <- lm(meancunt~Temp+I(Temp^2)+Time+Conc,data=tryptone)
+summary(lmresult1)
+lmresult1 <- lm(meancount~Temp+I(Temp^2)+Time+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult1)
+lmresult2 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult2)
+lmresult3 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+I(Conc^3)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult3)
+lmresult4 <- lm(meancount~Temp+I(Temp^2)+Time+I(Conc^2)+I(Conc^3)+I(Conc^4)+Conc+I(Temp*Time),data=tryptone)
+summary(lmresult4)
+
+y_vec2 <- -1.305e+03+5.461e+01*35-6.419e-01*(35)^2+1.061e+01*48-2.073e-01*(35*48)+3.460e+02*concvec2-1.265e+02*(concvec2)^2
+plot(concvec2,y_vec)
+y_vec <- -6.093e+02+5.461e+01*35-6.419e-01*(35)^2+1.061e+01*48-2.073e-01*(35*48)-1.960e+03*concvec2+2.289e+03*(concvec2)^2-8.052e+02*(concvec2)^3
+y_vec <- -3.831e+03+5.461e+01*35-6.419e-01*(35)^2+1.061e+01*48-2.073e-01*(35*48)+1.226e+04*concvec-2.042e+04*(concvec)^2+1.480e+04*(concvec)^3-3.900e+03*(concvec)^4
+df <- data.frame(concvec,y_vec)
+names(df) <- c("x","y")
+concvec2 <- seq(0.4,1.8,length=100)
+y_vec2 <- -3.831e+03+5.461e+01*35-6.419e-01*(35)^2+1.061e+01*48-2.073e-01*(35*48)+1.226e+04*concvec2-2.042e+04*(concvec2)^2+1.480e+04*(concvec2)^3-3.900e+03*(concvec2)^4
+df2 <- data.frame(concvec2,y_vec2)
+names(df2) <- c("x","y")
+ggplot(filter(tryptone,Temp==35&Time==48))+geom_point(aes(x=Conc,y=meancount))+geom_line(data=df2,aes(x,y))
